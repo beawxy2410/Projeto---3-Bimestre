@@ -3,74 +3,78 @@ import pandas as pd
 from views import View
 import time
 
-class ManterClienteUI:
+#TODO: revisar os erros!!!!
+
+class ManterPacienteUI:
     def main():
-        st.header("Cadastro de Clientes")
+        st.header("Cadastro de Pacientes")
         tab1, tab2, tab3, tab4 = st.tabs(["Listar", "Inserir", "Atualizar", "Excluir"])
-        with tab1: ManterClienteUI.listar()
-        with tab2: ManterClienteUI.inserir()
-        with tab3: ManterClienteUI.atualizar()
-        with tab4: ManterClienteUI.excluir()
+        with tab1: ManterPacienteUI.listar()
+        with tab2: ManterPacienteUI.inserir()
+        with tab3: ManterPacienteUI.atualizar()
+        with tab4: ManterPacienteUI.excluir()
 
     def listar():
-        clientes = View.cliente_listar()
-        if len(clientes) == 0: 
-            st.write("Nenhum cliente cadastrado")
+        pacientes = View.paciente_listar()
+        if len(pacientes) == 0: 
+            st.write("Nenhum paciente cadastrado")
         else:    
             #for obj in clientes: st.write(obj)
             dic = []
-            for obj in clientes: dic.append(obj.__dict__)
+            for obj in pacientes: dic.append(obj.__dict__)
             df = pd.DataFrame(dic)
             st.dataframe(df)
 
     def inserir():
-        nome = st.text_input("Informe o nome do cliente")
+        nome = st.text_input("Informe o nome do paciente")
         email = st.text_input("Informe o e-mail")
         fone = st.text_input("Informe o telefone")
+        cpf = st.text_input("Digite o cpf")
         senha = st.text_input("Informe a senha", type="password")
     
         if st.button("Inserir"):
             try:
-                View.cliente_inserir(nome, email, fone, senha)
-                st.success("Cliente inserido com sucesso.")
+                View.cliente_inserir(nome, email, fone, cpf, senha)
+                st.success("Paciente inserido com sucesso.")
                 time.sleep(2)
                 st.rerun()
             except ValueError as e:
                 st.error(str(e))
 
     def atualizar():
-        clientes = View.cliente_listar()
-        if len(clientes) == 0: 
-            st.write("Nenhum cliente cadastrado")
+        pacientes = View.paciente_listar()
+        if len(pacientes) == 0: 
+            st.write("Nenhum paciente cadastrado")
         else:
-            op = st.selectbox("Atualização de cliente", clientes)
-            nome = st.text_input("Informe o novo nome do cliente", op.get_nome())
-            email = st.text_input("Informe o novo e-mail", op.get_email())
-            fone = st.text_input("Informe o novo fone", op.get_fone())
-            senha = st.text_input("Informe a nova senha", op.get_senha(), type="password")
+            op = st.selectbox("Atualização de paciente", pacientes)
+            nome = st.text_input("Informe o novo nome do paciente", op.nome())
+            email = st.text_input("Informe o novo e-mail", op.email())
+            fone = st.text_input("Informe o novo fone", op.fone())
+            cpf = st.text_input("Informe o cpf")
+            senha = st.text_input("Informe a nova senha", op.senha(), type="password")
             if st.button("Atualizar"):
                 try:
-                    View.cliente_atualizar(op.get_id(), nome, email, fone, senha)
-                    st.success("Cliente atualizado com sucesso")
+                    View.cliente_atualizar(op.id(), nome, email, fone, cpf, senha)
+                    st.success("Paciente atualizado com sucesso")
                     time.sleep(2)
                     st.rerun()
                 except ValueError as e:
                     st.error(str(e))
 
     def excluir():
-        clientes = View.cliente_listar()
-        if len(clientes) == 0: 
-            st.write("Nenhum cliente cadastrado.")
+        pacientes = View.paciente_listar()
+        if len(pacientes) == 0: 
+            st.write("Nenhum paciente cadastrado.")
         else:
-            descricao_para_cliente = {
-                f"ID: {c.get_id()} - Nome: {c.get_nome()}": c for c in clientes
+            descricao_para_paciente = {
+                f"ID: {c.id()} - Nome: {c.nome()}": c for c in pacientes
             }
-        descricao_escolhida = st.selectbox("Exclusão de cliente", list(descricao_para_cliente.keys()))
-        cliente_escolhido = descricao_para_cliente[descricao_escolhida]
+        descricao_escolhida = st.selectbox("Exclusão de paciente", list(descricao_para_paciente.keys()))
+        paciente_escolhido = descricao_para_paciente[descricao_escolhida]
         if st.button("Excluir"):
             try:
-                View.cliente_excluir(cliente_escolhido.get_id())
-                st.success("Cliente excluído com sucesso.")
+                View.paciente_excluir(paciente_escolhido.id())
+                st.success("Paciente excluído com sucesso.")
                 time.sleep(2)
                 st.rerun()
             except ValueError as e:
